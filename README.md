@@ -1,7 +1,7 @@
 # eStockMarket-component3
 
 ## Backend:
-	### Running Ports on localhost:
+	 Running Ports on localhost :
    		netflix-eureka (discovery-service) : 8761
    		api-gateway : 8765
    		company-service : 8085
@@ -9,7 +9,7 @@
    		rabbitmq : 5672 | Management : 15672
    		KeyCloak : 8180
  
- 	### uri:
+ 	  uri:
    		Eureka : http://localhost:8761
    		Spring Docs : http://localhost:8085/v3/api-docs
    		Actuator-Monitoring : http://localhost:8085/actuator
@@ -51,6 +51,7 @@
  
 ## Docker :
 	maven goal : spring-boot:build-image -DskipTests
+	maven goal for jar : package
   	POM.xml -> plugin
   	<plugin>
 		<groupId>org.springframework.boot</groupId>
