@@ -17,8 +17,9 @@
    		Elastic Search : http://localhost:9200
    		Kibana : http://localhost:5601
    		zipkin : http://localhost:9411
+		SonarQube :http://localhost:9000
    
-## SonarQube : http://localhost:9000
+## SonarQube : 
 	sonar security : ################################
 	maven goal : sonar:sonar -Dsonar.login = <sonar security>	
      POM.xml -> plugin
