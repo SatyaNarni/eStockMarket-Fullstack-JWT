@@ -1,0 +1,72 @@
+spring:
+  application:
+    name: api-gateway
+  sleuth:
+    sampler:
+      probability: 1.0
+  cloud:
+    gateway:
+      default-filters:
+        - TokenRelay
+        #- DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_UNIQUE
+      #globalcors:
+        #add-to-simple-url-handler-mapping: true
+        #cors-configurations:
+          #'[/**]':
+            #allowedOrigins: "*"
+            #allowedMethods: "*"
+            #allowedHeaders: "*"
+      routes:
+        - id: stock-service
+          uri: lb://stock-service
+          predicates:
+            - Path=/stock/**
+        - id: company-service
+          uri: lb://company-service
+          predicates:
+            - Path=/company/**
+  security:
+    oauth2:
+      client:
+        provider:
+          my-keycloak-provider:
+            issuer-uri: http://localhost:8180/auth/realms/eStockMarketApp
+            # Individual properties can also be provided this way
+#            token-uri: http://localhost:8180/auth/realms/eStockMarketApp/protocol/openid-connect/token
+#            authorization-uri: http://localhost:8180/auth/realms/eStockMarketApp/protocol/openid-connect/auth
+#            userinfo-uri: http://localhost:8180/auth/realms/eStockMarketApp/protocol/openid-connect/userinfo
+#            user-name-attribute: preferred_username
+        registration:
+          keycloak-spring-gateway-client:
+            provider: my-keycloak-provider
+            client-id: my-app-client
+            client-secret: wtwmmj9awmHhmXHwDSMvdfX2W1f8xxQ0
+            authorization-grant-type: authorization_code
+            redirect-uri: "http://localhost:8765/login/oauth2/code/my-keycloak-provider"
+
+# Enable these to debug the Authorization flow
+logging:
+    file:
+      name: C:\Users\User\Downloads\eStockMarket-MicroServices-master
+    level:
+      org:
+        springframework:
+          security:
+            web: DEBUG
+
+server:
+  port: 8765
+  error:
+    whitelabel:
+      enabled: false
+      
+eureka:
+  client:
+    service-url:
+      defaultzone: http://localhost:8761/eureka
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"

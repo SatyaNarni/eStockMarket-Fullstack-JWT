@@ -1,0 +1,124 @@
+version: '3.7'
+
+services:
+  company-service:
+    image: docker.io/118004113/msv1-company-service:0.0.1-SNAPSHOT
+    mem_limit: 900m
+    ports:
+      - "8085:8085"
+    networks:
+      - stockmarket-network
+    depends_on:
+      - netflix-eureka-naming-server
+      - mysqldb
+    environment:
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://netflix-eureka-naming-server:8761/eureka
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysqldb:3306/company_service?createDatabaseIfNotExist=true
+      SPRING.ZIPKIN.BASEURL: http://zipkin-server:9411/
+      RABBIT_URI: amqp://guest:guest@rabbitmq:5672
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_ZIPKIN_SENDER_TYPE: rabbit
+
+  mysqldb:
+    image: mysql:8
+    mem_limit: 300m
+    ports:
+      - "3307:3306"
+    restart: always
+    environment:
+      MYSQL_DATABASE: company_service
+      MYSQL_USER: root
+      MYSQL_PASSWORD: sastra123
+      MYSQL_ROOT_PASSWORD: sastra123
+    networks:
+      - stockmarket-network
+      
+  netflix-eureka-naming-server:
+    image: docker.io/118004113/msv1-netflix-eureka-naming-server:0.0.1-SNAPSHOT
+    mem_limit: 700m
+    ports:
+      - "8761:8761"
+    networks:
+      - stockmarket-network
+      
+  stock-service:
+    image: docker.io/118004113/msv1-stock-service:0.0.1-SNAPSHOT
+    mem_limit: 700m
+    ports:
+      - "8091:8091"
+    networks:
+      - stockmarket-network
+    depends_on:
+      - mongo_db
+      - netflix-eureka-naming-server
+      
+    environment:
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://netflix-eureka-naming-server:8761/eureka
+      SPRING.ZIPKIN.BASEURL: http://zipkin-server:9411/
+      RABBIT_URI: amqp://guest:guest@rabbitmq:5672
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_ZIPKIN_SENDER_TYPE: rabbit
+     
+  mongo_db:
+    image: mongo
+    restart: always
+    mem_limit: 300m
+    ports:
+      - "27017:27017"
+    networks:
+      - stockmarket-network
+      
+  api-gateway:
+    image: docker.io/118004113/msv1-api-gateway:0.0.1-SNAPSHOT
+    mem_limit: 700m
+    ports:
+      - "8765:8765"
+    networks:
+      - stockmarket-network
+    depends_on:
+      - netflix-eureka-naming-server
+      - keycloak
+    environment:
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://netflix-eureka-naming-server:8761/eureka
+      SPRING.ZIPKIN.BASEURL: http://zipkin-server:9411/
+      RABBIT_URI: amqp://guest:guest@rabbitmq:5672
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_ZIPKIN_SENDER_TYPE: rabbit
+      
+  keycloak:
+    image: jboss/keycloak
+    ports:
+      - "8080:8080"
+    mem_limit: 300m
+    environment:
+      KEYCLOAK_USER: satya.narni
+      KEYCLOAK_PASSWORD: 654321
+    networks:
+      - stockmarket-network
+      
+  rabbitmq:
+    image: rabbitmq:3.5.3-management
+    mem_limit: 300m
+    ports:
+      - "5672:5672"
+      - "15672::15672"
+    networks:
+      - stockmarket-network
+
+ 
+  zipkin-server:
+    image: openzipkin/zipkin:2.23
+    mem_limit: 300m
+    ports:
+      - "9411:9411"
+    networks:
+      - stockmarket-network
+    depends_on:
+      - rabbitmq
+    restart: always
+    environment:
+      RABBIT_URI: amqp://guest:guest@rabbitmq:5672
+    
+networks:
+  stockmarket-network:
+    
