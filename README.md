@@ -25,35 +25,36 @@ Backend:
 	    pass : *****
      POM.xml -> plugin
        <plugin>
-				    <groupId>org.sonarsource.scanner.maven</groupId>
-				     <artifactId>sonar-maven-plugin</artifactId>
-				      <version>3.8.0.2131</version>
-			    </plugin>
+		<groupId>org.sonarsource.scanner.maven</groupId>
+		<artifactId>sonar-maven-plugin</artifactId>
+		<version>3.8.0.2131</version>
+	</plugin>
 			
-			    <plugin>
-				     <groupId>org.jacoco</groupId>
-				     <artifactId>jacoco-maven-plugin</artifactId>
-				     <version>0.8.5</version>
-				    <executions>
-					    <execution>
-						    <id>prepare-agent</id>
-						   <goals>
-							   <goal>prepare-agent</goal>
-						   </goals>
-					   </execution>
-					   <execution>
-						   <id>report</id>
-						    <goals>
-							    <goal>report</goal>
-						    </goals>
-					    </execution>
-				    </executions>
-      </plugin>
+	<plugin>
+		<groupId>org.jacoco</groupId>
+		<artifactId>jacoco-maven-plugin</artifactId>
+		<version>0.8.5</version>
+		<executions>
+			<execution>
+				<id>prepare-agent</id>
+				<goals>
+					<goal>prepare-agent</goal>
+				</goals>
+			</execution>
+			<execution>
+				<id>report</id>
+				<goals>
+					<goal>report</goal>
+				</goals>
+			</execution>
+		</executions>
+      	</plugin>
  
- Docker:
+ 
+Docker:
 	 maven goal : spring-boot:build-image -DskipTests
   POM.xml -> plugin
-  <plugin>
+  			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
